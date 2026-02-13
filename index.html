@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gastritis Healing Journey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2d5f4f;
+      --primary-light: #4a8270;
+      --secondary: #e8f5e1;
+      --accent: #f4a261;
+      --bg: #fdfbf7;
+      --text: #2c2c2c;
+      --text-light: #6b7280;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: rgba(0, 0, 0, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--secondary) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 600px; margin: 0 auto; animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 30px 20px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    h1 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2.5em;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .day-counter { font-size: 1.2em; color: var(--text-light); margin-top: 10px; }
+    .day-number { color: var(--accent); font-weight: 700; font-size: 1.3em; }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 15px var(--shadow);
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card-header { display: flex; align-items: center; margin-bottom: 20px; }
+    .card-icon { font-size: 1.8em; margin-right: 12px; }
+    .card-title { font-family: 'Crimson Pro', serif; font-size: 1.5em; color: var(--primary); font-weight: 600; }
+
+    .medication-reminder {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .medication-reminder.completed { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); }
+
+    .med-time { font-size: 0.9em; opacity: 0.9; margin-bottom: 8px; }
+    .med-name { font-size: 1.3em; font-weight: 600; margin-bottom: 12px; }
+
+    .checkbox-container { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .checkbox {
+      width: 24px; height: 24px; border: 2px solid white; border-radius: 6px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .checkbox.checked { background: white; color: var(--primary); }
+    .checkbox.checked::after { content: "✓"; font-weight: bold; font-size: 1.2em; }
+
+    .meal-log { margin-bottom: 15px; }
+    .meal-time { font-weight: 600; color: var(--primary); margin-bottom: 10px; display: block; }
+
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1em;
+      resize: vertical;
+      min-height: 60px;
+      transition: border-color 0.3s ease;
+    }
+    textarea:focus { outline: none; border-color: var(--primary); }
+
+    .safe-foods { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .food-tag {
+      background: var(--secondary);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .food-tag:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+
+    .symptom-tracker { margin-top: 15px; }
+
+    .pain-scale { display: flex; justify-content: space-between; margin: 20px 0; gap: 6px; flex-wrap: wrap; }
+    .pain-level {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .pain-level:hover { transform: scale(1.05); }
+    .pain-level.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .pain-level.low { border-color: var(--success); }
+    .pain-level.medium { border-color: var(--warning); }
+    .pain-level.high { border-color: var(--danger); }
+
+    .pain-level.selected.low { background: var(--success); }
+    .pain-level.selected.medium { background: var(--warning); }
+    .pain-level.selected.high { background: var(--danger); }
+
+    button {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(45, 95, 79, 0.3);
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(45, 95, 79, 0.4); }
+    button:active { transform: translateY(0); }
+
+    .motivation {
+      background: linear-gradient(135deg, var(--accent) 0%, #e76f51 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.1em;
+      line-height: 1.6;
+      box-shadow: 0 4px 15px rgba(244, 162, 97, 0.3);
+    }
+
+    .emergency-info {
+      background: #fef3c7;
+      border-left: 4px solid var(--warning);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 0.9em;
+    }
+    .emergency-info strong { color: var(--danger); }
+
+    .week-summary { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 15px; }
+    .day-dot {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    .day-dot.completed { background: var(--success); color: white; }
+    .day-dot.today { border: 3px solid var(--primary); background: white; color: var(--primary); }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 2em; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>🌿 Healing Journey</h1>
+      <div class="day-counter">
+        Day <span class="day-number" id="currentDay">1</span> of 30
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 3.33%"></div>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">💊</span>
+        <h2 class="card-title">Today's Medication</h2>
+      </div>
+
+      <div class="medication-reminder" id="morningMed">
+        <div class="med-time">☀️ Morning (30 min before breakfast)</div>
+        <div class="med-name">H2 Blocker</div>
+        <div class="checkbox-container">
+          <div class="checkbox" id="morningCheck" onclick="toggleMedication('morning')"></div>
+          <span>I took my medication</span>
+        </div>
+      </div>
+
+      <div class="medication-reminder" id="eveningMed">
+        <div class="med-time">🌙 Evening (if prescribed twice daily)</div>
+        <div class="med-name">H2 Blocker</div>
+        <div class="checkbox-container">
+          <div class="checkbox" id="eveningCheck" onclick="toggleMedication('evening')"></div>
+          <span>I took my medication</span>
+        </div>
+      </div>
+
+      <div class="motivation" style="margin-top: 20px;">
+        "You're doing this! Each dose helps your stomach heal. You're stronger than your fear. 💚"
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🍽️</span>
+        <h2 class="card-title">Meal Log</h2>
+      </div>
+
+      <div class="meal-log">
+        <label class="meal-time">Breakfast</label>
+        <textarea id="breakfast" placeholder="What did you eat? (e.g., oatmeal with banana)"></textarea>
+        <div class="safe-foods">
+          <span class="food-tag" onclick="addFood('breakfast', 'Oatmeal')">Oatmeal</span>
+          <span class="food-tag" onclick="addFood('breakfast', 'Banana')">Banana</span>
+          <span class="food-tag" onclick="addFood('breakfast', 'Scrambled eggs')">Eggs</span>
+          <span class="food-tag" onclick="addFood('breakfast', 'White toast')">Toast</span>
+        </div>
+      </div>
+
+      <div class="meal-log">
+        <label class="meal-time">Lunch</label>
+        <textarea id="lunch" placeholder="What did you eat?"></textarea>
+        <div class="safe-foods">
+          <span class="food-tag" onclick="addFood('lunch', 'Grilled chicken')">Chicken</span>
+          <span class="food-tag" onclick="addFood('lunch', 'White rice')">Rice</span>
+          <span class="food-tag" onclick="addFood('lunch', 'Steamed carrots')">Carrots</span>
+          <span class="food-tag" onclick="addFood('lunch', 'Mashed potatoes')">Potatoes</span>
+        </div>
+      </div>
+
+      <div class="meal-log">
+        <label class="meal-time">Dinner</label>
+        <textarea id="dinner" placeholder="What did you eat?"></textarea>
+        <div class="safe-foods">
+          <span class="food-tag" onclick="addFood('dinner', 'Baked fish')">Fish</span>
+          <span class="food-tag" onclick="addFood('dinner', 'Chicken breast')">Chicken</span>
+          <span class="food-tag" onclick="addFood('dinner', 'Green beans')">Green beans</span>
+          <span class="food-tag" onclick="addFood('dinner', 'Sweet potato')">Sweet potato</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📊</span>
+        <h2 class="card-title">How Are You Feeling?</h2>
+      </div>
+
+      <div class="symptom-tracker">
+        <label style="font-weight: 600; display: block; margin-bottom: 10px;">Pain Level (0 = none, 10 = severe)</label>
+        <div class="pain-scale" id="painScale">
+          <div class="pain-level low" data-level="0" onclick="setPainLevel(0)">0</div>
+          <div class="pain-level low" data-level="1" onclick="setPainLevel(1)">1</div>
+          <div class="pain-level low" data-level="2" onclick="setPainLevel(2)">2</div>
+          <div class="pain-level low" data-level="3" onclick="setPainLevel(3)">3</div>
+          <div class="pain-level medium" data-level="4" onclick="setPainLevel(4)">4</div>
+          <div class="pain-level medium" data-level="5" onclick="setPainLevel(5)">5</div>
+          <div class="pain-level medium" data-level="6" onclick="setPainLevel(6)">6</div>
+          <div class="pain-level high" data-level="7" onclick="setPainLevel(7)">7</div>
+          <div class="pain-level high" data-level="8" onclick="setPainLevel(8)">8</div>
+          <div class="pain-level high" data-level="9" onclick="setPainLevel(9)">9</div>
+          <div class="pain-level high" data-level="10" onclick="setPainLevel(10)">10</div>
+        </div>
+      </div>
+
+      <div class="notes-section">
+        <label style="font-weight: 600; display: block; margin-bottom: 10px;">Notes & Observations</label>
+        <textarea id="notes" placeholder="Any symptoms, triggers, or improvements you noticed today?"></textarea>
+      </div>
+
+      <div class="emergency-info">
+        <strong>⚠️ Seek immediate help if:</strong> Severe pain, vomiting blood, black stools, or persistent worsening despite medication.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">📅</span>
+        <h2 class="card-title">30-Day Progress</h2>
+      </div>
+      <div class="week-summary" id="weekSummary"></div>
+    </div>
+
+    <button class="save-btn" onclick="saveDay()">✓ Save Today's Progress</button>
+
+    <div style="text-align: center; margin-top: 30px; color: var(--text-light); font-size: 0.9em;">
+      <p>Remember: Healing takes time. Be patient with yourself. 🌱</p>
+    </div>
+  </div>
+
+  <script>
+    // Local date key (YYYY-MM-DD) in the user's timezone (fixes iPhone UTC shift)
+    function localDateKey(d = new Date()) {
+      const offsetMs = d.getTimezoneOffset() * 60 * 1000;
+      const local = new Date(d.getTime() - offsetMs);
+      return local.toISOString().slice(0, 10);
+    }
+
+    // Initialize or load data
+    let trackerData = JSON.parse(localStorage.getItem('gastritisTracker')) || {
+      startDate: localDateKey(), // store as local date string, not full UTC ISO
+      days: {}
+    };
+
+    function calculateCurrentDay() {
+      const start = new Date(trackerData.startDate + "T00:00:00");
+      const now = new Date();
+      const diffTime = now - start;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // Day 1 minimum
+      return Math.min(Math.max(diffDays, 1), 30);
+    }
+
+    let currentDayNum = calculateCurrentDay();
+
+    function initializeApp() {
+      document.getElementById('currentDay').textContent = currentDayNum;
+      document.getElementById('progressFill').style.width = (currentDayNum / 30 * 100) + '%';
+
+      loadTodayData();
+      renderWeekSummary();
+    }
+
+    function loadTodayData() {
+      const today = localDateKey();
+      const dayData = trackerData.days[today];
+
+      if (dayData) {
+        if (dayData.morningMed) toggleMedication('morning', true);
+        if (dayData.eveningMed) toggleMedication('evening', true);
+
+        document.getElementById('breakfast').value = dayData.breakfast || '';
+        document.getElementById('lunch').value = dayData.lunch || '';
+        document.getElementById('dinner').value = dayData.dinner || '';
+        document.getElementById('notes').value = dayData.notes || '';
+
+        if (dayData.painLevel !== null && dayData.painLevel !== undefined) {
+          setPainLevel(dayData.painLevel, true);
+        }
+      }
+    }
+
+    function toggleMedication(time, silent = false) {
+      const checkbox = document.getElementById(time + 'Check');
+      const reminder = document.getElementById(time + 'Med');
+
+      checkbox.classList.toggle('checked');
+      reminder.classList.toggle('completed');
+
+      if (!silent) saveDay();
+    }
+
+    function setPainLevel(level, silent = false) {
+      document.querySelectorAll('.pain-level').forEach(el => el.classList.remove('selected'));
+      const selected = document.querySelector(`[data-level="${level}"]`);
+      if (selected) selected.classList.add('selected');
+      if (!silent) saveDay();
+    }
+
+    function addFood(mealId, foodName) {
+      const textarea = document.getElementById(mealId);
+      const current = textarea.value.trim();
+      textarea.value = current ? (current + ', ' + foodName) : foodName;
+      // optional: auto-save on tap
+      saveDay();
+    }
+
+    function saveDay() {
+      const today = localDateKey();
+      const selectedPain = document.querySelector('.pain-level.selected');
+
+      trackerData.days[today] = {
+        morningMed: document.getElementById('morningCheck').classList.contains('checked'),
+        eveningMed: document.getElementById('eveningCheck').classList.contains('checked'),
+        breakfast: document.getElementById('breakfast').value,
+        lunch: document.getElementById('lunch').value,
+        dinner: document.getElementById('dinner').value,
+        painLevel: selectedPain ? parseInt(selectedPain.dataset.level, 10) : null,
+        notes: document.getElementById('notes').value,
+        timestamp: new Date().toISOString()
+      };
+
+      localStorage.setItem('gastritisTracker', JSON.stringify(trackerData));
+      renderWeekSummary();
+
+      const btn = document.querySelector('.save-btn');
+      btn.textContent = '✓ Saved!';
+      clearTimeout(window.__saveBtnTimer);
+      window.__saveBtnTimer = setTimeout(() => {
+        btn.textContent = "✓ Save Today's Progress";
+      }, 1200);
+    }
+
+    function renderWeekSummary() {
+      const container = document.getElementById('weekSummary');
+      container.innerHTML = '';
+
+      for (let i = 0; i < 30; i++) {
+        const date = new Date(trackerData.startDate + "T00:00:00");
+        date.setDate(date.getDate() + i);
+
+        const dateStr = localDateKey(date);
+
+        const dot = document.createElement('div');
+        dot.className = 'day-dot';
+        dot.textContent = i + 1;
+
+        const dayData = trackerData.days[dateStr];
+        if (dayData && (dayData.morningMed || dayData.eveningMed || dayData.breakfast || dayData.lunch || dayData.dinner || dayData.notes)) {
+          dot.classList.add('completed');
+        }
+
+        if (i + 1 === currentDayNum) dot.classList.add('today');
+
+        container.appendChild(dot);
+      }
+    }
+
+    initializeApp();
+
+    // Auto-save every 30 seconds if anything exists
+    setInterval(() => {
+      const morning = document.getElementById('morningCheck').classList.contains('checked');
+      const evening = document.getElementById('eveningCheck').classList.contains('checked');
+      const breakfast = document.getElementById('breakfast').value.trim();
+      const lunch = document.getElementById('lunch').value.trim();
+      const dinner = document.getElementById('dinner').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+      if (morning || evening || breakfast || lunch || dinner || notes) saveDay();
+    }, 30000);
+  </script>
+</body>
+</html>
