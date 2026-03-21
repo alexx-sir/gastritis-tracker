@@ -4,490 +4,205 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gut Healing Journal</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #F5F0E8;
-    --warm-white: #FAF8F4;
-    --sage: #7A9B76;
-    --sage-light: #C4D8C0;
-    --sage-dark: #4A6B46;
-    --clay: #C17F5A;
-    --clay-light: #E8C4A8;
-    --terracotta: #9B4E2E;
-    --bark: #3D2B1F;
-    --bark-light: #6B4E3D;
-    --mist: #E8EDE6;
-    --amber: #D4A04A;
-    --red-soft: #C25F5F;
-    --text: #2A1F1A;
-    --text-muted: #7A6860;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* Decorative background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      radial-gradient(ellipse 600px 400px at 10% 20%, rgba(122,155,118,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 400px 600px at 90% 80%, rgba(193,127,90,0.07) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
-
-  /* Header */
-  header {
-    padding: 48px 0 32px;
-    border-bottom: 1px solid rgba(61,43,31,0.12);
-    margin-bottom: 40px;
-  }
-
-  .header-inner { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; }
-
-  .logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 32px;
-    color: var(--bark);
-    line-height: 1;
-  }
-  .logo span { color: var(--sage-dark); font-style: italic; }
-
-  .header-meta { text-align: right; }
-  .header-meta .date { font-size: 13px; color: var(--text-muted); font-weight: 300; }
-  .header-meta .streak { font-size: 13px; color: var(--sage-dark); font-weight: 500; margin-top: 4px; }
-
-  /* Progress overview */
-  .progress-section { margin-bottom: 40px; }
-
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 20px;
-    color: var(--bark);
-    margin-bottom: 20px;
-  }
-
-  .phase-timeline {
-    display: flex;
-    gap: 0;
-    background: var(--warm-white);
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid rgba(61,43,31,0.08);
-    overflow-x: auto;
-  }
-
-  .phase-item {
-    flex: 1;
-    min-width: 120px;
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-
-  .phase-item:hover { transform: translateY(-2px); }
-
-  .phase-item:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 20px;
-    width: 100%;
-    height: 2px;
-    background: var(--mist);
-    z-index: 0;
-  }
-
-  .phase-dot {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    border: 2px solid var(--mist);
-    background: var(--cream);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 500;
-    position: relative; z-index: 1;
-    margin-bottom: 10px;
-    transition: all 0.3s;
-  }
-
-  .phase-item.active .phase-dot {
-    background: var(--sage);
-    border-color: var(--sage);
-    color: white;
-    box-shadow: 0 0 0 4px rgba(122,155,118,0.2);
-  }
-
-  .phase-item.done .phase-dot {
-    background: var(--sage-dark);
-    border-color: var(--sage-dark);
-    color: white;
-  }
-
-  .phase-item.locked .phase-dot { opacity: 0.4; }
-
-  .phase-label { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
-  .phase-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-
-  /* Today's log */
-  .log-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
-
-  @media (max-width: 600px) { .log-grid { grid-template-columns: 1fr; } }
-
-  .card {
-    background: var(--warm-white);
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid rgba(61,43,31,0.08);
-  }
-
-  .card-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-
-  /* Symptom sliders */
-  .symptom-row { margin-bottom: 16px; }
-  .symptom-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
-  .symptom-name { color: var(--text); font-weight: 400; }
-  .symptom-val { color: var(--sage-dark); font-weight: 500; font-size: 12px; }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    border-radius: 4px;
-    background: var(--mist);
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--sage);
-    cursor: pointer;
-    transition: transform 0.15s;
-    box-shadow: 0 2px 6px rgba(74,107,70,0.3);
-  }
-
-  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-  /* Mood tracker */
-  .mood-grid { display: flex; gap: 8px; flex-wrap: wrap; }
-
-  .mood-btn {
-    background: var(--cream);
-    border: 1.5px solid rgba(61,43,31,0.12);
-    border-radius: 10px;
-    padding: 8px 14px;
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--text-muted);
-  }
-
-  .mood-btn:hover { border-color: var(--sage); color: var(--sage-dark); }
-  .mood-btn.selected { background: var(--sage); border-color: var(--sage); color: white; }
-
-  /* Food log */
-  .food-log-area {
-    width: 100%;
-    min-height: 90px;
-    background: var(--cream);
-    border: 1.5px solid rgba(61,43,31,0.1);
-    border-radius: 10px;
-    padding: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--text);
-    resize: none;
-    outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.6;
-  }
-
-  .food-log-area:focus { border-color: var(--sage); }
-  .food-log-area::placeholder { color: var(--text-muted); }
-
-  /* Checklist */
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(61,43,31,0.06);
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .check-item:last-child { border-bottom: none; }
-
-  .check-box {
-    width: 20px; height: 20px;
-    border: 1.5px solid rgba(61,43,31,0.2);
-    border-radius: 6px;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    background: var(--cream);
-  }
-
-  .check-item.checked .check-box {
-    background: var(--sage);
-    border-color: var(--sage);
-  }
-
-  .check-item.checked .check-box::after {
-    content: '';
-    width: 10px; height: 6px;
-    border-left: 2px solid white;
-    border-bottom: 2px solid white;
-    transform: rotate(-45deg) translateY(-1px);
-    display: block;
-  }
-
-  .check-label { font-size: 13px; color: var(--text); line-height: 1.4; }
-  .check-item.checked .check-label { color: var(--text-muted); text-decoration: line-through; }
-
-  /* Save button */
-  .save-btn {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    background: var(--sage-dark);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
-    letter-spacing: 0.02em;
-  }
-
-  .save-btn:hover { background: var(--bark); transform: translateY(-1px); }
-  .save-btn:active { transform: translateY(0); }
-
-  /* History */
-  .history-section { margin-bottom: 48px; }
-
-  .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-
-  .entry-list { display: flex; flex-direction: column; gap: 12px; }
-
-  .entry-card {
-    background: var(--warm-white);
-    border: 1px solid rgba(61,43,31,0.08);
-    border-radius: 14px;
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .entry-card:hover { border-color: var(--sage-light); transform: translateX(4px); }
-
-  .entry-date-block { text-align: center; min-width: 44px; }
-  .entry-day { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--bark); line-height: 1; }
-  .entry-month { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-top: 2px; }
-
-  .entry-divider { width: 1px; height: 40px; background: rgba(61,43,31,0.1); flex-shrink: 0; }
-
-  .entry-content { flex: 1; }
-  .entry-mood { font-size: 12px; color: var(--sage-dark); font-weight: 500; margin-bottom: 4px; }
-  .entry-summary { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
-
-  .entry-score {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 500;
-    flex-shrink: 0;
-  }
-
-  .score-good { background: rgba(122,155,118,0.15); color: var(--sage-dark); }
-  .score-mid { background: rgba(212,160,74,0.15); color: #A07820; }
-  .score-bad { background: rgba(194,95,95,0.15); color: var(--red-soft); }
-
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--bark);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s;
-    z-index: 100;
-    pointer-events: none;
-  }
-
-  .toast.show { opacity: 1; transform: translateY(0); }
-
-  /* Insights bar */
-  .insights-bar {
-    background: var(--warm-white);
-    border: 1px solid rgba(61,43,31,0.08);
-    border-radius: 14px;
-    padding: 18px 24px;
-    margin-bottom: 40px;
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-
-  .insight-stat { display: flex; flex-direction: column; gap: 4px; }
-  .insight-val { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--bark); line-height: 1; }
-  .insight-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
-
-  /* Phase detail modal */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(42,31,26,0.5);
-    z-index: 50;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--warm-white);
-    border-radius: 20px;
-    padding: 32px;
-    max-width: 480px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-  }
-
-  .modal-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--bark); margin-bottom: 8px; }
-  .modal-subtitle { font-size: 13px; color: var(--sage-dark); font-weight: 500; margin-bottom: 20px; }
-  .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
-  .modal-body ul { padding-left: 16px; margin-top: 8px; }
-  .modal-body li { margin-bottom: 6px; }
-
-  .modal-close {
-    position: absolute; top: 16px; right: 16px;
-    background: var(--cream);
-    border: none;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    color: var(--text-muted);
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .modal-close:hover { background: var(--mist); }
-
-  .progress-bar-wrap { margin-top: 16px; }
-  .progress-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-  .progress-bar-bg { height: 6px; background: var(--mist); border-radius: 4px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: var(--sage); border-radius: 4px; transition: width 0.6s ease; }
+:root {
+  --cream:#F5F0E8;--warm:#FAF8F4;--sage:#7A9B76;--sage-l:#C4D8C0;--sage-d:#4A6B46;
+  --clay:#C17F5A;--clay-l:#E8C4A8;--terra:#9B4E2E;--bark:#3D2B1F;--bark-l:#6B4E3D;
+  --mist:#E8EDE6;--amber:#D4A04A;--red:#C25F5F;--text:#2A1F1A;--muted:#7A6860;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 600px 400px at 10% 20%,rgba(122,155,118,.08) 0%,transparent 70%),radial-gradient(ellipse 400px 600px at 90% 80%,rgba(193,127,90,.07) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.container{max-width:960px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+.nav{display:flex;gap:4px;background:var(--warm);border-radius:14px;padding:6px;border:1px solid rgba(61,43,31,.08);margin-bottom:32px;flex-wrap:wrap;}
+.nav-btn{flex:1;min-width:70px;padding:8px 10px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.nav-btn.active{background:var(--sage-d);color:#fff;}
+.nav-btn:hover:not(.active){background:var(--mist);color:var(--text);}
+.tab{display:none;}.tab.active{display:block;}
+header{padding:40px 0 28px;border-bottom:1px solid rgba(61,43,31,.12);margin-bottom:32px;}
+.header-inner{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;}
+.logo{font-family:'DM Serif Display',serif;font-size:30px;color:var(--bark);line-height:1;}
+.logo span{color:var(--sage-d);font-style:italic;}
+.header-meta .date{font-size:12px;color:var(--muted);}
+.header-meta .streak{font-size:12px;color:var(--sage-d);font-weight:500;margin-top:3px;}
+.card{background:var(--warm);border-radius:16px;padding:24px;border:1px solid rgba(61,43,31,.08);}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:14px;font-weight:500;}
+.section-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--bark);margin-bottom:18px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:32px;}
+@media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
+.insights-bar{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:14px;padding:18px 24px;margin-bottom:32px;display:flex;gap:28px;flex-wrap:wrap;}
+.insight-stat{display:flex;flex-direction:column;gap:3px;}
+.insight-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--bark);line-height:1;}
+.insight-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.phase-timeline{display:flex;background:var(--warm);border-radius:16px;padding:20px 16px;border:1px solid rgba(61,43,31,.08);overflow-x:auto;margin-bottom:32px;}
+.phase-item{flex:1;min-width:100px;cursor:pointer;transition:transform .2s;position:relative;}
+.phase-item:hover{transform:translateY(-2px);}
+.phase-item:not(:last-child)::after{content:'';position:absolute;right:0;top:17px;width:100%;height:2px;background:var(--mist);z-index:0;}
+.phase-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--mist);background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;position:relative;z-index:1;margin-bottom:8px;transition:all .3s;}
+.phase-item.active .phase-dot{background:var(--sage);border-color:var(--sage);color:#fff;box-shadow:0 0 0 4px rgba(122,155,118,.2);}
+.phase-item.done .phase-dot{background:var(--sage-d);border-color:var(--sage-d);color:#fff;}
+.phase-item.locked .phase-dot{opacity:.35;}
+.phase-label{font-size:10px;color:var(--muted);line-height:1.4;}
+.phase-name{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.symptom-row{margin-bottom:13px;}
+.symptom-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.symptom-val{color:var(--sage-d);font-weight:500;font-size:12px;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--mist);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--sage);cursor:pointer;box-shadow:0 2px 6px rgba(74,107,70,.3);transition:transform .15s;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+.mood-grid{display:flex;gap:7px;flex-wrap:wrap;}
+.mood-btn{background:var(--cream);border:1.5px solid rgba(61,43,31,.12);border-radius:9px;padding:7px 12px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;color:var(--muted);}
+.mood-btn:hover{border-color:var(--sage);color:var(--sage-d);}
+.mood-btn.selected{background:var(--sage);border-color:var(--sage);color:#fff;}
+.log-area{width:100%;min-height:80px;background:var(--cream);border:1.5px solid rgba(61,43,31,.1);border-radius:10px;padding:11px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);resize:none;outline:none;transition:border-color .2s;line-height:1.6;}
+.log-area:focus{border-color:var(--sage);}
+.log-area::placeholder{color:var(--muted);}
+.check-item{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid rgba(61,43,31,.06);cursor:pointer;}
+.check-item:last-child{border-bottom:none;}
+.check-box{width:18px;height:18px;border:1.5px solid rgba(61,43,31,.2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--cream);margin-top:2px;}
+.check-item.checked .check-box{background:var(--sage);border-color:var(--sage);}
+.check-item.checked .check-box::after{content:'';width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block;}
+.check-label{font-size:13px;color:var(--text);line-height:1.5;}
+.check-item.checked .check-label{color:var(--muted);text-decoration:line-through;}
+.check-note{font-size:11px;color:var(--muted);display:block;margin-top:2px;}
+.btn-primary{display:block;width:100%;padding:13px;background:var(--sage-d);color:#fff;border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{background:var(--bark);transform:translateY(-1px);}
+.btn-sm{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;border:1.5px solid rgba(61,43,31,.15);background:transparent;color:var(--muted);}
+.btn-sm:hover{background:var(--mist);}
+.entry-card{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:14px;padding:15px 17px;display:flex;align-items:center;gap:13px;margin-bottom:10px;transition:all .2s;}
+.entry-card:hover{border-color:var(--sage-l);transform:translateX(3px);}
+.entry-date-block{text-align:center;min-width:40px;}
+.entry-day{font-family:'DM Serif Display',serif;font-size:22px;color:var(--bark);line-height:1;}
+.entry-month{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:2px;}
+.entry-divider{width:1px;height:36px;background:rgba(61,43,31,.1);flex-shrink:0;}
+.entry-content{flex:1;}
+.entry-mood{font-size:12px;color:var(--sage-d);font-weight:500;margin-bottom:3px;}
+.entry-summary{font-size:12px;color:var(--muted);}
+.entry-score{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;}
+.s-good{background:rgba(122,155,118,.15);color:var(--sage-d);}
+.s-mid{background:rgba(212,160,74,.15);color:#A07820;}
+.s-bad{background:rgba(194,95,95,.15);color:var(--red);}
+.food-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+@media(max-width:580px){.food-grid{grid-template-columns:1fr;}}
+.food-card{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:13px;padding:16px;}
+.food-card.safe{border-left:3px solid var(--sage);}
+.food-card.avoid{border-left:3px solid var(--red);}
+.food-card.caution{border-left:3px solid var(--amber);}
+.food-card h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.tag-safe{background:rgba(122,155,118,.12);color:var(--sage-d);padding:1px 7px;border-radius:9px;font-size:10px;}
+.tag-avoid{background:rgba(194,95,95,.12);color:var(--red);padding:1px 7px;border-radius:9px;font-size:10px;}
+.tag-caution{background:rgba(212,160,74,.12);color:#A07820;padding:1px 7px;border-radius:9px;font-size:10px;}
+.food-list{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.food-list li{font-size:12px;color:var(--muted);padding-left:13px;position:relative;line-height:1.4;}
+.food-list li::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;}
+.food-card.safe .food-list li::before{background:var(--sage);}
+.food-card.avoid .food-list li::before{background:var(--red);}
+.food-card.caution .food-list li::before{background:var(--amber);}
+.supp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(max-width:580px){.supp-grid{grid-template-columns:1fr;}}
+.supp-card{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:12px;padding:16px;}
+.supp-icon{font-size:18px;margin-bottom:8px;display:block;}
+.supp-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.supp-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.supp-dose{font-size:11px;color:var(--sage-d);font-weight:500;margin-top:7px;padding-top:7px;border-top:1px solid rgba(61,43,31,.07);}
+.tip-card{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:13px;padding:16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;}
+.tip-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.tip-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.tip-body{font-size:12px;color:var(--muted);line-height:1.6;}
+.chart-wrap{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:16px;padding:22px;margin-bottom:24px;}
+.chart-bars{display:flex;align-items:flex-end;gap:7px;height:100px;margin-top:12px;}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{width:100%;border-radius:4px 4px 0 0;min-height:3px;cursor:pointer;position:relative;}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text);background:var(--cream);padding:2px 6px;border-radius:4px;white-space:nowrap;border:1px solid rgba(61,43,31,.1);}
+.bar-label{font-size:9px;color:var(--muted);text-align:center;}
+.pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
+.pill{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid rgba(61,43,31,.12);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .2s;}
+.pill.on{background:var(--sage-d);border-color:var(--sage-d);color:#fff;}
+.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;}
+.badge{display:inline-block;padding:2px 9px;border-radius:9px;font-size:10px;font-weight:500;}
+.b-green{background:rgba(122,155,118,.15);color:var(--sage-d);}
+.b-amber{background:rgba(212,160,74,.15);color:#A07820;}
+.meal-day{background:var(--warm);border:1px solid rgba(61,43,31,.08);border-radius:13px;padding:18px;margin-bottom:12px;}
+.meal-day-title{font-size:13px;font-weight:500;color:var(--bark);margin-bottom:12px;}
+.meal-row{display:flex;gap:12px;margin-bottom:7px;align-items:flex-start;}
+.meal-time{font-size:11px;color:var(--sage-d);font-weight:500;min-width:76px;padding-top:1px;}
+.meal-desc{font-size:12px;color:var(--muted);line-height:1.5;flex:1;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(42,31,26,.5);z-index:50;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--warm);border-radius:20px;padding:28px;max-width:460px;width:100%;max-height:84vh;overflow-y:auto;position:relative;}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--bark);margin-bottom:5px;}
+.modal-sub{font-size:13px;color:var(--sage-d);font-weight:500;margin-bottom:15px;}
+.modal-body{font-size:13px;color:var(--muted);line-height:1.8;}
+.modal-body ul{padding-left:16px;margin-top:6px;}
+.modal-body li{margin-bottom:5px;}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--cream);border:none;width:29px;height:29px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center;}
+.prog-bar-wrap{margin-top:14px;}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;}
+.prog-bg{height:5px;background:var(--mist);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--sage);border-radius:3px;transition:width .6s ease;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--bark);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .3s;z-index:100;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
 </style>
 </head>
 <body>
-
 <div class="container">
-  <header>
-    <div class="header-inner">
-      <div class="logo">Gut <span>Healing</span> Journal</div>
-      <div class="header-meta">
-        <div class="date" id="today-date"></div>
-        <div class="streak" id="streak-label">Loading streak...</div>
-      </div>
-    </div>
-  </header>
 
-  <!-- Insights -->
+<header>
+  <div class="header-inner">
+    <div class="logo">Gut <span>Healing</span> Journal</div>
+    <div class="header-meta">
+      <div class="date" id="today-date"></div>
+      <div class="streak" id="streak-label"></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="nav-btn" onclick="switchTab('log')">Today's Log</button>
+  <button class="nav-btn" onclick="switchTab('plan')">Healing Plan</button>
+  <button class="nav-btn" onclick="switchTab('foods')">Food Guide</button>
+  <button class="nav-btn" onclick="switchTab('supplements')">Supplements</button>
+  <button class="nav-btn" onclick="switchTab('meals')">Meal Plan</button>
+  <button class="nav-btn" onclick="switchTab('tips')">Daily Tips</button>
+  <button class="nav-btn" onclick="switchTab('history')">History</button>
+</nav>
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="tab active">
   <div class="insights-bar">
-    <div class="insight-stat">
-      <div class="insight-val" id="ins-days">0</div>
-      <div class="insight-label">Days tracked</div>
-    </div>
-    <div class="insight-stat">
-      <div class="insight-val" id="ins-streak">0</div>
-      <div class="insight-label">Day streak</div>
-    </div>
-    <div class="insight-stat">
-      <div class="insight-val" id="ins-avg">—</div>
-      <div class="insight-label">Avg symptom score</div>
-    </div>
-    <div class="insight-stat">
-      <div class="insight-val" id="ins-phase">1</div>
-      <div class="insight-label">Current phase</div>
-    </div>
+    <div class="insight-stat"><div class="insight-val" id="ins-days">0</div><div class="insight-label">Days tracked</div></div>
+    <div class="insight-stat"><div class="insight-val" id="ins-streak">0</div><div class="insight-label">Day streak</div></div>
+    <div class="insight-stat"><div class="insight-val" id="ins-avg">—</div><div class="insight-label">Avg symptom score</div></div>
+    <div class="insight-stat"><div class="insight-val" id="ins-phase">1</div><div class="insight-label">Current phase</div></div>
+    <div class="insight-stat"><div class="insight-val" id="ins-best">—</div><div class="insight-label">Best day score</div></div>
   </div>
-
-  <!-- Phase timeline -->
-  <div class="progress-section">
-    <div class="section-title">Your 2-year healing plan</div>
-    <div class="phase-timeline" id="phase-timeline"></div>
+  <div class="section-title">2-Year healing roadmap</div>
+  <div class="phase-timeline" id="phase-timeline"></div>
+  <div class="section-title">Symptom trend — last 14 days</div>
+  <div class="chart-wrap">
+    <div class="card-title">Average daily symptom score (hover bars for details)</div>
+    <div class="chart-bars" id="chart-bars"></div>
   </div>
+  <div class="section-title">Today at a glance</div>
+  <div class="card" id="today-summary"><div style="font-size:13px;color:var(--muted);">No entry yet today. <span style="color:var(--sage-d);cursor:pointer;" onclick="switchTab('log')">Log your day →</span></div></div>
+</div>
 
-  <!-- Today's log -->
+<!-- TODAY LOG -->
+<div id="tab-log" class="tab">
   <div class="section-title">Today's log</div>
-  <div class="log-grid">
-
+  <div class="grid-2">
     <div class="card">
       <div class="card-title">Symptoms (1 = none, 10 = severe)</div>
-      <div class="symptom-row">
-        <div class="symptom-label"><span class="symptom-name">Bloating</span><span class="symptom-val" id="v-bloating">1</span></div>
-        <input type="range" min="1" max="10" value="1" id="sl-bloating" oninput="updateSlider('bloating',this.value)">
-      </div>
-      <div class="symptom-row">
-        <div class="symptom-label"><span class="symptom-name">Stomach burning</span><span class="symptom-val" id="v-burning">1</span></div>
-        <input type="range" min="1" max="10" value="1" id="sl-burning" oninput="updateSlider('burning',this.value)">
-      </div>
-      <div class="symptom-row">
-        <div class="symptom-label"><span class="symptom-name">Nausea</span><span class="symptom-val" id="v-nausea">1</span></div>
-        <input type="range" min="1" max="10" value="1" id="sl-nausea" oninput="updateSlider('nausea',this.value)">
-      </div>
-      <div class="symptom-row">
-        <div class="symptom-label"><span class="symptom-name">Pain</span><span class="symptom-val" id="v-pain">1</span></div>
-        <input type="range" min="1" max="10" value="1" id="sl-pain" oninput="updateSlider('pain',this.value)">
-      </div>
+      <div class="symptom-row"><div class="symptom-label"><span>Bloating</span><span class="symptom-val" id="v-bloating">1</span></div><input type="range" min="1" max="10" value="1" id="sl-bloating" oninput="updateSlider('bloating',this.value)"></div>
+      <div class="symptom-row"><div class="symptom-label"><span>Stomach burning</span><span class="symptom-val" id="v-burning">1</span></div><input type="range" min="1" max="10" value="1" id="sl-burning" oninput="updateSlider('burning',this.value)"></div>
+      <div class="symptom-row"><div class="symptom-label"><span>Nausea</span><span class="symptom-val" id="v-nausea">1</span></div><input type="range" min="1" max="10" value="1" id="sl-nausea" oninput="updateSlider('nausea',this.value)"></div>
+      <div class="symptom-row"><div class="symptom-label"><span>Pain</span><span class="symptom-val" id="v-pain">1</span></div><input type="range" min="1" max="10" value="1" id="sl-pain" oninput="updateSlider('pain',this.value)"></div>
+      <div class="symptom-row"><div class="symptom-label"><span>Stress level</span><span class="symptom-val" id="v-stress">1</span></div><input type="range" min="1" max="10" value="1" id="sl-stress" oninput="updateSlider('stress',this.value)"></div>
     </div>
-
     <div class="card">
-      <div class="card-title">How are you feeling overall?</div>
+      <div class="card-title">Overall feeling</div>
       <div class="mood-grid" id="mood-grid">
         <button class="mood-btn" onclick="selectMood(this,'Great')">Great</button>
         <button class="mood-btn" onclick="selectMood(this,'Good')">Good</button>
@@ -495,72 +210,101 @@
         <button class="mood-btn" onclick="selectMood(this,'Rough')">Rough</button>
         <button class="mood-btn" onclick="selectMood(this,'Bad day')">Bad day</button>
       </div>
-      <div style="margin-top:20px">
+      <div style="margin-top:18px;">
         <div class="card-title">What did you eat today?</div>
-        <textarea class="food-log-area" id="food-log" placeholder="e.g. oatmeal, bone broth, cooked carrots, chamomile tea..."></textarea>
+        <textarea class="log-area" id="food-log" placeholder="e.g. oatmeal with almond milk, bone broth, steamed carrots, chamomile tea, white rice with grilled chicken..."></textarea>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">Daily checklist</div>
+      <div class="card-title">Daily protocol checklist — Capellan method</div>
       <div id="checklist">
-        <div class="check-item" onclick="toggleCheck(this)">
-          <div class="check-box"></div>
-          <span class="check-label">Ate small meals (every 3–4 hrs)</span>
-        </div>
-        <div class="check-item" onclick="toggleCheck(this)">
-          <div class="check-box"></div>
-          <span class="check-label">No coffee, alcohol, or spicy food</span>
-        </div>
-        <div class="check-item" onclick="toggleCheck(this)">
-          <div class="check-box"></div>
-          <span class="check-label">No food 2 hrs before bed</span>
-        </div>
-        <div class="check-item" onclick="toggleCheck(this)">
-          <div class="check-box"></div>
-          <span class="check-label">Took probiotics / supplements</span>
-        </div>
-        <div class="check-item" onclick="toggleCheck(this)">
-          <div class="check-box"></div>
-          <span class="check-label">Stress management (walk, rest, breath)</span>
-        </div>
-        <div class="check-item" onclick="toggleCheck(this)">
-          <div class="check-box"></div>
-          <span class="check-label">Drank enough water (not with meals)</span>
-        </div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Ate 5–6 small meals spaced 2–3 hrs apart<span class="check-note">Prevents stomach overload and excess acid production</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Chewed every bite 30+ times<span class="check-note">Reduces digestive burden on inflamed stomach lining</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Avoided coffee, alcohol, spicy and fried food<span class="check-note">All increase acid and irritate the gastric mucosa</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">No food within 2 hrs of bedtime<span class="check-note">Lying down increases acid reflux risk significantly</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Stayed upright 30+ min after eating<span class="check-note">Gravity keeps stomach acids from refluxing up</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Drank water between meals, not during<span class="check-note">Water with meals dilutes digestive enzymes</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Took supplements (DGL, zinc carnosine, etc.)<span class="check-note">Take DGL and slippery elm 20 min BEFORE meals</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Stress management (walk, breathe, rest)<span class="check-note">Cortisol weakens stomach's protective mucus barrier</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">7–8 hrs sleep<span class="check-note">Mucosal cell repair primarily happens during sleep</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Zero NSAIDs today (ibuprofen / aspirin / naproxen)<span class="check-note">These directly erode the gastric mucosa — permanently avoid</span></span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Gentle exercise only (walking, yoga)<span class="check-note">Intense exercise increases intra-abdominal pressure</span></span></div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">Notes & observations</div>
-      <textarea class="food-log-area" id="notes-log" style="min-height:120px" placeholder="Any triggers noticed? Stressful day? New symptoms? Doctor updates..."></textarea>
-      <button class="save-btn" onclick="saveEntry()">Save today's entry</button>
-    </div>
-
-  </div>
-
-  <!-- History -->
-  <div class="history-section">
-    <div class="history-header">
-      <div class="section-title">Past entries</div>
-    </div>
-    <div class="entry-list" id="entry-list">
-      <div class="empty-state">No entries yet — save today's log to get started.</div>
+      <div class="card-title">Notes and triggers</div>
+      <textarea class="log-area" style="min-height:110px;" id="notes-log" placeholder="Any triggers noticed? Stressful day? New foods tried? How did you feel after eating? Doctor updates..."></textarea>
+      <button class="btn-primary" style="margin-top:12px;" onclick="saveEntry()">Save today's entry</button>
     </div>
   </div>
+</div>
+
+<!-- HEALING PLAN -->
+<div id="tab-plan" class="tab">
+  <div class="section-title">Your 2-year healing plan</div>
+  <div class="phase-timeline" id="phase-timeline-2"></div>
+  <div id="phase-cards"></div>
+</div>
+
+<!-- FOOD GUIDE -->
+<div id="tab-foods" class="tab">
+  <div class="section-title">Food guide — Capellan protocol</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.7;">Capellan's rule: choose foods with pH above 5, low fat, and easy to digest. Avoid anything that increases acid, irritates the mucosa, or slows gastric emptying. Your tolerance will be individual — track reactions in your daily log.</p>
+  <div class="pill-row" id="food-filter">
+    <button class="pill on" onclick="filterFoods('all',this)">All</button>
+    <button class="pill" onclick="filterFoods('safe',this)">Safe foods</button>
+    <button class="pill" onclick="filterFoods('avoid',this)">Avoid</button>
+    <button class="pill" onclick="filterFoods('caution',this)">Caution</button>
+  </div>
+  <div class="food-grid" id="food-grid"></div>
+</div>
+
+<!-- SUPPLEMENTS -->
+<div id="tab-supplements" class="tab">
+  <div class="section-title">Supplement protocol</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.7;">Capellan's science-backed supplement stack for protecting and repairing the gastric mucosal lining. Always check with your doctor, especially if on other medications.</p>
+  <div class="supp-grid" id="supp-grid"></div>
+  <div class="card">
+    <div class="card-title">Important: on PPIs and acid medication</div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.7;">Capellan specifically cautions <strong style="color:var(--text);font-weight:500;">against long-term PPI use</strong>. For nighttime protection, he recommends short-term H2 blockers (famotidine) over PPIs, as they preserve daytime digestive function. Sucralfate can be used short-term as a physical protective barrier that adheres directly to the stomach lining — not acid-based, so it works regardless of acid levels.</p>
+  </div>
+</div>
+
+<!-- MEAL PLAN -->
+<div id="tab-meals" class="tab">
+  <div class="section-title">7-day gastritis meal plan</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.7;">Based on Capellan's 7-day template: 5–6 small meals per day, pH-friendly, low fat, easy to digest. Adjust based on your personal tolerance — if something causes a flare, remove it and note it in your daily log.</p>
+  <div id="meal-plan-content"></div>
+</div>
+
+<!-- DAILY TIPS -->
+<div id="tab-tips" class="tab">
+  <div class="section-title">Daily healing tips</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.7;">The key lifestyle protocols from the Gastritis Healing Book by L.G. Capellan. These are the habits that determine whether healing happens.</p>
+  <div id="tips-list"></div>
+</div>
+
+<!-- HISTORY -->
+<div id="tab-history" class="tab">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <div class="section-title" style="margin-bottom:0;">Past entries</div>
+    <button class="btn-sm" onclick="if(confirm('Clear all entries? This cannot be undone.'))clearEntries()">Clear all</button>
+  </div>
+  <div id="entry-list"><div class="empty">No entries yet.</div></div>
+</div>
 
 </div>
 
-<!-- Phase modal -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
     <div class="modal-title" id="modal-title"></div>
-    <div class="modal-subtitle" id="modal-subtitle"></div>
+    <div class="modal-sub" id="modal-sub"></div>
     <div class="modal-body" id="modal-body"></div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar-label"><span>Progress</span><span id="modal-progress-label">0%</span></div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" id="modal-progress-bar" style="width:0%"></div></div>
+    <div class="prog-bar-wrap">
+      <div class="prog-label"><span>Phase progress</span><span id="modal-pct">0%</span></div>
+      <div class="prog-bg"><div class="prog-fill" id="modal-fill" style="width:0%"></div></div>
     </div>
   </div>
 </div>
@@ -568,254 +312,277 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const PHASES = [
-  {
-    name: 'Diagnose',
-    range: 'Months 1–2',
-    months: [1, 2],
-    color: '#C17F5A',
-    title: 'Phase 1 — Get the right diagnosis',
-    subtitle: 'Months 1–2: Find the root cause',
-    body: `This is the most critical phase. Everything else depends on it.<ul>
-      <li>Book a SIBO breath test (most likely cause given your symptoms)</li>
-      <li>Retest for H. pylori with breath or stool test (not blood test)</li>
-      <li>Ask about low stomach acid assessment</li>
-      <li>Start elimination diet: remove gluten, dairy, alcohol, coffee, spicy food</li>
-      <li>Eat small meals every 3–4 hours</li>
-      <li>No food within 2 hours of bed</li>
-    </ul>`
-  },
-  {
-    name: 'Treat',
-    range: 'Months 3–5',
-    months: [3, 4, 5],
-    color: '#D4A04A',
-    title: 'Phase 2 — Treat the root cause',
-    subtitle: 'Months 3–5: Target what\'s actually wrong',
-    body: `Based on your diagnosis results:<ul>
-      <li>If SIBO: Rifaximin antibiotics + strict low-FODMAP diet</li>
-      <li>If H. pylori: triple therapy antibiotics (2 weeks)</li>
-      <li>If low stomach acid: digestive enzymes + betaine HCl (with doctor)</li>
-      <li>Start probiotics AFTER any antibiotic course</li>
-      <li>Add zinc carnosine — shown to help gastric lining</li>
-      <li>Add slippery elm or deglycyrrhizinated licorice (DGL)</li>
-    </ul>`
-  },
-  {
-    name: 'Heal',
-    range: 'Months 6–12',
-    months: [6, 7, 8, 9, 10, 11, 12],
-    color: '#7A9B76',
-    title: 'Phase 3 — Heal the lining',
-    subtitle: 'Months 6–12: Rebuild from the inside',
-    body: `Root cause treated — now repair the stomach lining:<ul>
-      <li>Introduce bone broth daily (collagen supports mucosa)</li>
-      <li>Cabbage juice 2–3x/week (glutamine content aids lining)</li>
-      <li>Cooked vegetables over raw — easier to digest</li>
-      <li>Manage stress actively — cortisol directly damages stomach lining</li>
-      <li>Retest to confirm SIBO/H. pylori cleared</li>
-      <li>Follow up endoscopy to assess lining recovery</li>
-    </ul>`
-  },
-  {
-    name: 'Rebuild',
-    range: 'Months 13–18',
-    months: [13, 14, 15, 16, 17, 18],
-    color: '#7A9B76',
-    title: 'Phase 4 — Rebuild and reintroduce',
-    subtitle: 'Months 13–18: Expand carefully',
-    body: `Feeling significantly better by now. Expand your diet carefully:<ul>
-      <li>Reintroduce foods one at a time, wait 3 days between each</li>
-      <li>Track reactions meticulously in your journal</li>
-      <li>Fermented foods: kefir, kimchi, sauerkraut (if tolerated)</li>
-      <li>Diverse fiber sources to rebuild gut microbiome</li>
-      <li>Keep sleep and stress management as non-negotiables</li>
-      <li>Continue no NSAIDs (ibuprofen, aspirin, naproxen)</li>
-    </ul>`
-  },
-  {
-    name: 'Maintain',
-    range: 'Months 19–24',
-    months: [19, 20, 21, 22, 23, 24],
-    color: '#4A6B46',
-    title: 'Phase 5 — Maintain and protect',
-    subtitle: 'Months 19–24: Long-term remission',
-    body: `Most people with a correctly treated cause are feeling well or fully healed by now:<ul>
-      <li>Final endoscopy check if any symptoms persist</li>
-      <li>Long-term clean diet maintained</li>
-      <li>Ongoing stress management as lifestyle (not a phase)</li>
-      <li>Annual H. pylori / SIBO monitoring if history of it</li>
-      <li>No NSAIDs ever — switch to acetaminophen for pain</li>
-      <li>Celebrate — this took real commitment</li>
-    </ul>`
-  }
+const PHASES=[
+  {name:'Diagnose',range:'Months 1–2',months:[1,2],title:'Phase 1 — Get the right diagnosis',sub:'Months 1–2: Find the root cause before treating anything',body:`Capellan is clear: treating without knowing the root cause is the #1 reason chronic gastritis persists for years.<ul>
+    <li>Book a <strong>SIBO breath test</strong> — most likely root cause given your symptoms (bloating + burning unresponsive to PPIs)</li>
+    <li>Retest for <strong>H. pylori</strong> with breath or stool antigen test — blood tests are unreliable</li>
+    <li>Ask about <strong>low stomach acid (hypochlorhydria)</strong> — often misdiagnosed as high acid; PPIs make it worse</li>
+    <li>Ask about <strong>bile reflux</strong> — bile backflow that PPIs don't address at all</li>
+    <li>Begin the elimination diet immediately: remove gluten, dairy, alcohol, coffee, spicy food, fried food, NSAIDs</li>
+    <li>Start eating 5–6 small meals per day, spaced 2–3 hrs apart</li>
+    <li>Chew every bite 30+ times — Capellan calls this non-negotiable</li>
+  </ul>`},
+  {name:'Treat',range:'Months 3–5',months:[3,4,5],title:'Phase 2 — Treat the root cause',sub:'Months 3–5: Target what is actually wrong',body:`Based on your test results:<ul>
+    <li><strong>SIBO positive:</strong> Rifaximin antibiotic course + strict low-FODMAP diet. Avoid garlic, onions, beans, raw high-fiber foods during treatment.</li>
+    <li><strong>H. pylori positive:</strong> Triple therapy — 2 antibiotics + acid reducer for 14 days. Always retest after to confirm eradication.</li>
+    <li><strong>Bile reflux:</strong> Ursodiol or cholestyramine (prescription). Prokinetics to improve stomach emptying.</li>
+    <li><strong>Low stomach acid:</strong> Betaine HCl with pepsin under medical guidance. Digestive enzymes with meals.</li>
+    <li>Start healing supplements: DGL licorice, zinc carnosine, slippery elm, L-glutamine</li>
+    <li>Begin probiotics only <em>after</em> any antibiotic course is complete — not during</li>
+    <li>Sucralfate short-term as a physical stomach lining protector, especially at night</li>
+  </ul>`},
+  {name:'Heal',range:'Months 6–12',months:[6,7,8,9,10,11,12],title:'Phase 3 — Heal the lining',sub:'Months 6–12: Repair and rebuild the gastric mucosa',body:`Root cause treated — now actively repair the stomach lining:<ul>
+    <li>Introduce <strong>bone broth</strong> daily — glycine and collagen directly support mucosal repair</li>
+    <li><strong>Cabbage juice</strong> 2–3x per week — glutamine content aids stomach lining regeneration</li>
+    <li>Cooked vegetables only — steamed, roasted, or well-boiled. Raw vegetables are too abrasive.</li>
+    <li>Continue lean proteins: grilled chicken, turkey, white fish, steamed shellfish</li>
+    <li>Active daily stress management — cortisol reduces blood flow to the stomach wall and prevents healing</li>
+    <li>Gentle exercise only — walking, gentle yoga. Intense exercise increases intra-abdominal pressure.</li>
+    <li>Elevate head of bed 6–8 inches if experiencing nighttime symptoms</li>
+    <li>Follow-up endoscopy to assess lining recovery and confirm root cause was cleared</li>
+  </ul>`},
+  {name:'Rebuild',range:'Months 13–18',months:[13,14,15,16,17,18],title:'Phase 4 — Rebuild and expand',sub:'Months 13–18: Carefully reintroduce foods and rebuild the microbiome',body:`<ul>
+    <li>Reintroduce foods <strong>one at a time</strong> — wait 3 days between each new food and track reactions in your log</li>
+    <li>Introduce fermented foods gradually: natural kefir, plain yogurt, sauerkraut, kimchi — if tolerated</li>
+    <li>Expand fiber sources: cooked oats, lentils, sweet potato — these feed beneficial gut bacteria</li>
+    <li>Stress management becomes a permanent lifestyle — not a phase. This does not end.</li>
+    <li>Continue 7–8 hrs sleep nightly — mucosal cell regeneration peaks during deep sleep</li>
+    <li>Continue avoiding NSAIDs permanently — switch to acetaminophen for all pain relief</li>
+    <li>If you were a smoker: continue abstaining. Smoking compromises blood supply to the stomach wall.</li>
+  </ul>`},
+  {name:'Maintain',range:'Months 19–24',months:[19,20,21,22,23,24],title:'Phase 5 — Maintain remission',sub:'Months 19–24: Protect the healing you worked hard for',body:`<ul>
+    <li>Final endoscopy to confirm full or near-full mucosal healing</li>
+    <li>Annual SIBO or H. pylori monitoring — recurrence is possible, especially if reexposed</li>
+    <li>Maintain a clean baseline diet — less strict than Phase 1, but keep the fundamentals</li>
+    <li>No NSAIDs ever — Capellan's strongest permanent recommendation</li>
+    <li>Ongoing stress management, quality sleep, and gentle exercise as a lifestyle</li>
+    <li>If symptoms ever return: return immediately to Phase 1 protocol and investigate root cause again</li>
+  </ul>`}
 ];
 
-let selectedMood = '';
-const startDate = new Date('2026-03-19');
+const FOODS=[
+  {cat:'safe',title:'Grains and starches',items:['White rice (well cooked)','Plain oatmeal (soft cooked)','White bread or plain toast','Rice cakes','Boiled or mashed potato','Gluten-free pasta']},
+  {cat:'safe',title:'Proteins',items:['Grilled or baked chicken breast (skinless)','Turkey breast (skinless)','White fish — cod, tilapia, sole','Steamed shrimp or scallops','Soft-boiled or poached eggs','Plain tofu']},
+  {cat:'safe',title:'Vegetables (cooked only)',items:['Steamed carrots','Cooked zucchini','Lightly cooked spinach','Green beans (well cooked)','Cooked peas','Sweet potato (well cooked)','Peeled cucumber']},
+  {cat:'safe',title:'Fruits',items:['Ripe banana','Cantaloupe or honeydew melon','Papaya (digestive enzymes)','Peeled cooked apple','Avocado (small portions)']},
+  {cat:'safe',title:'Beverages',items:['Chamomile tea (2–3x daily)','Licorice root tea','Mild ginger tea','Aloe vera juice (inner leaf only)','Alkaline water pH 7–8','Almond milk (unsweetened)','Coconut water']},
+  {cat:'safe',title:'Healing foods',items:['Bone broth (daily)','Cabbage juice (2–3x weekly)','Manuka honey (small amounts)','Olive oil (small amounts)','Almond butter (no hydrogenated oils)','Fresh ginger (cooked in dishes)']},
+  {cat:'avoid',title:'Beverages to avoid',items:['Coffee (including decaf — still acidic)','All alcohol','Carbonated drinks','Citrus juices (OJ, grapefruit, lemon)','Energy drinks','Mint tea (relaxes LES valve)','Black tea']},
+  {cat:'avoid',title:'Foods to avoid',items:['Spicy food — chili, hot sauce, curry, pepper','Fried and deep-fried food','Processed meats — bacon, sausage, deli meat','Raw onion and raw garlic','Tomatoes and tomato-based sauces','Full-fat dairy — milk, cheese, cream, butter','Chocolate','Vinegar, pickled foods, fermented vinegar products']},
+  {cat:'avoid',title:'Habits that worsen gastritis',items:['NSAIDs — ibuprofen, naproxen, aspirin (permanently avoid)','Smoking','Eating large meals','Lying down immediately after eating','Eating within 2 hrs of bedtime','Drinking large amounts of water during meals','Skipping meals (causes excess acid buildup)']},
+  {cat:'caution',title:'Individual tolerance varies',items:['Broccoli and cauliflower (gas-forming for some)','Beans and lentils (start with small cooked portions)','Whole wheat bread (some tolerate, test carefully)','Natural yogurt (some heal well with it, others react)','Certain spices — coriander, cumin, mild turmeric','Bananas (occasionally cause bloating in some people)']},
+];
 
-function getMonthsSinceStart() {
-  const now = new Date();
-  const diff = (now.getFullYear() - startDate.getFullYear()) * 12 + (now.getMonth() - startDate.getMonth());
-  return Math.max(1, diff + 1);
+const SUPPS=[
+  {icon:'🌿',name:'DGL licorice (deglycyrrhizinated)',dose:'400–760mg, 20 min before meals',desc:'Capellan considers this one of the most critical supplements. Forms a protective mucus layer over the stomach lining before food and acid arrive. The deglycyrrhizinated form removes the compound that raises blood pressure.'},
+  {icon:'🦪',name:'Zinc carnosine',dose:'75mg twice daily with meals',desc:'Clinically proven to accelerate gastric mucosal healing and reduce H. pylori-associated inflammation. Also reduces gut permeability (leaky gut) which commonly accompanies chronic gastritis.'},
+  {icon:'🌳',name:'Slippery elm',dose:'400–500mg or 1 tsp powder in water before meals',desc:'Creates a soothing gel-like coating over the stomach lining. Reduces irritation and physically protects the mucosa from acid exposure during healing. Take before meals like DGL.'},
+  {icon:'🥛',name:'Multi-strain probiotics',dose:'10–50 billion CFU daily, after antibiotics only',desc:'Restores beneficial gut flora disrupted by gastritis, inflammation, and antibiotic treatment. Critical: start ONLY after completing any antibiotic course. Look for Lactobacillus rhamnosus and Bifidobacterium longum strains.'},
+  {icon:'🌱',name:'L-Glutamine',dose:'5g daily in water on empty stomach',desc:'The primary fuel source for stomach and intestinal lining cells. Directly supports mucosal repair and restores gut barrier integrity. Found naturally in cabbage juice — the reason Capellan recommends it.'},
+  {icon:'🍵',name:'Aloe vera juice (inner leaf)',dose:'60–120ml before meals',desc:'Anti-inflammatory and soothing to the stomach lining. Use inner leaf only — outer leaf is a laxative. Capellan recommends this alongside DGL for acute flare-ups and ongoing maintenance.'},
+  {icon:'🫚',name:'Mastic gum',dose:'500mg twice daily before meals',desc:'A natural resin with proven anti-H. pylori activity. Can be used alongside antibiotic therapy or as a standalone for milder cases. Also reduces stomach inflammation independently of H. pylori.'},
+  {icon:'🧡',name:'Vitamin B12 (sublingual)',dose:'1000mcg sublingual daily',desc:'Chronic gastritis (especially atrophic forms) depletes B12 because the damaged stomach lining cannot produce intrinsic factor needed for absorption. Sublingual bypasses the stomach entirely.'},
+  {icon:'🌼',name:'Chamomile (tea or extract)',dose:'2–3 cups tea daily, or 300mg capsule',desc:'Anti-inflammatory and antispasmodic. Calms stomach cramping and bloating. Capellan recommends chamomile tea as a daily healing beverage throughout all phases — both therapeutic and soothing.'},
+  {icon:'🫧',name:'Sucralfate (short-term, prescription)',dose:'As prescribed by doctor',desc:'Not a supplement but worth knowing: forms a physical barrier over the stomach lining that Capellan recommends short-term. Works independently of acid levels — particularly useful at night for protecting the lining while sleeping.'},
+];
+
+const MEALS=[
+  {day:'Day 1',meals:[{t:'Breakfast',d:'Soft-cooked plain oatmeal with almond milk and ripe banana'},{t:'Mid-morning',d:'Chamomile tea + 2 plain rice cakes with almond butter'},{t:'Lunch',d:'White rice with steamed carrots and soft-poached chicken breast, seasoned with sea salt only'},{t:'Afternoon',d:'Small glass of aloe vera juice + bowl of papaya'},{t:'Dinner',d:'Bone broth soup with well-cooked zucchini, white rice and shredded turkey'},{t:'Evening',d:'Chamomile tea (at least 2 hrs before bed)'}]},
+  {day:'Day 2',meals:[{t:'Breakfast',d:'Soft-boiled eggs (2) with mashed potato and chamomile tea'},{t:'Mid-morning',d:'Ripe banana + almond milk'},{t:'Lunch',d:'Steamed white fish (cod) with cooked green beans and white rice'},{t:'Afternoon',d:'Plain rice cake + small portion of avocado'},{t:'Dinner',d:'Chicken and vegetable broth with cooked peas and boiled white rice'},{t:'Evening',d:'DGL licorice supplement + chamomile tea'}]},
+  {day:'Day 3',meals:[{t:'Breakfast',d:'Oatmeal with sliced ripe banana and a tsp of manuka honey'},{t:'Mid-morning',d:'Chamomile tea + plain rice cake'},{t:'Lunch',d:'Baked turkey breast (no skin) with well-cooked sweet potato and steamed spinach'},{t:'Afternoon',d:'Fresh cantaloupe melon (small bowl)'},{t:'Dinner',d:'Bone broth with tofu, cooked carrots and white rice'},{t:'Evening',d:'Small glass of cabbage juice (start slowly — 60ml)'}]},
+  {day:'Day 4',meals:[{t:'Breakfast',d:'Scrambled eggs (soft, no butter — use a drop of olive oil) with plain toast and chamomile tea'},{t:'Mid-morning',d:'Almond milk + rice cake with almond butter'},{t:'Lunch',d:'Steamed shrimp with white rice and steamed zucchini'},{t:'Afternoon',d:'Papaya (small bowl)'},{t:'Dinner',d:'Chicken broth soup with cooked green beans, potato, and shredded chicken'},{t:'Evening',d:'Mild ginger tea or chamomile tea'}]},
+  {day:'Day 5',meals:[{t:'Breakfast',d:'Plain oatmeal with honeydew melon pieces and almond milk'},{t:'Mid-morning',d:'Ripe banana + chamomile tea'},{t:'Lunch',d:'Baked salmon (small portion — oily fish is anti-inflammatory) with mashed potato and steamed carrots'},{t:'Afternoon',d:'Rice cake + almond butter'},{t:'Dinner',d:'Turkey meatballs (baked, no frying) with white rice and cooked zucchini'},{t:'Evening',d:'Aloe vera juice'}]},
+  {day:'Day 6',meals:[{t:'Breakfast',d:'Soft-boiled eggs with plain toast and chamomile tea'},{t:'Mid-morning',d:'Papaya + plain almond milk'},{t:'Lunch',d:'Grilled chicken breast with well-cooked lentils (small portion, well-cooked soft) and white rice'},{t:'Afternoon',d:'Small bowl of ripe melon'},{t:'Dinner',d:'White fish fillet (steamed) with mashed sweet potato and cooked green beans'},{t:'Evening',d:'Chamomile tea + DGL licorice before bed'}]},
+  {day:'Day 7',meals:[{t:'Breakfast',d:'Oatmeal cooked very soft with banana and a tsp of almond butter'},{t:'Mid-morning',d:'Warm cup of bone broth + plain rice cake'},{t:'Lunch',d:'Steamed chicken with white rice, cooked peas, and carrots'},{t:'Afternoon',d:'Aloe vera juice + papaya'},{t:'Dinner',d:'Turkey soup with potato and spinach in plain broth'},{t:'Evening',d:'Chamomile tea (2+ hrs before bed)'}]},
+];
+
+const TIPS=[
+  {icon:'🍽️',bg:'rgba(122,155,118,.12)',title:'Eat 5–6 small meals, not 3 large ones',body:'Large meals overwhelm the stomach, prolong acid exposure time, and worsen inflammation. Spacing meals 2–3 hours apart keeps acid production steady and manageable. Capellan calls this one of the single most impactful changes you can make.'},
+  {icon:'🦷',bg:'rgba(122,155,118,.12)',title:'Chew every bite 30+ times — non-negotiable',body:'Thorough chewing pre-digests food before it reaches your stomach, dramatically reducing the digestive burden on your inflamed lining. It also slows eating speed, prevents overeating, and reduces the size of food particles that can irritate the mucosa.'},
+  {icon:'🧘',bg:'rgba(122,155,118,.12)',title:'Treat stress as seriously as your diet',body:'Stress triggers cortisol and adrenaline, which reduces blood flow to the stomach wall and breaks down its protective mucus barrier. Capellan states clearly: healing is impossible in a chronically stressed state. Daily walks, breathing exercises, and 7–8 hrs sleep are as therapeutic as supplements.'},
+  {icon:'🚶',bg:'rgba(122,155,118,.12)',title:'Stay upright 30 minutes after every meal',body:"Gravity keeps stomach contents from refluxing upward and keeps acid in contact with the lining for less time. Stand, walk gently, or sit upright after eating. Never lie on the couch right after a meal — this is one of the most common habits that stalls healing."},
+  {icon:'💧',bg:'rgba(90,122,155,.12)',title:'Drink water between meals, not during',body:'Large amounts of water with meals dilutes digestive enzymes and stomach acid, impairs digestion, causes bloating, and slows gastric emptying. Sip very small amounts during meals only. Hydrate fully in the 1–2 hour gaps between meals.'},
+  {icon:'🛏️',bg:'rgba(90,122,155,.12)',title:'Elevate your head if you have nighttime symptoms',body:"Raise the head of your bed 6–8 inches using a wedge pillow or blocks under the bed frame. Don't just add pillows — they compress and don't hold the angle. Gastric acid levels naturally increase during sleep and nighttime reflux significantly delays mucosal healing."},
+  {icon:'🚭',bg:'rgba(194,95,95,.12)',title:'Smoking destroys your stomach lining directly',body:"Cigarettes increase stomach acid production, reduce protective mucus, narrow the blood vessels that supply the stomach wall, and interfere with PPI absorption. Capellan is direct: you cannot fully heal while smoking. If you don't smoke — avoid secondhand smoke during active healing phases too."},
+  {icon:'💊',bg:'rgba(194,95,95,.12)',title:'Never take NSAIDs — this is permanent',body:'Ibuprofen, aspirin, and naproxen directly erode the gastric mucosa. Even a single dose can set back weeks of healing. Switch to acetaminophen (paracetamol) for all pain relief. Always tell every doctor you see that you have chronic gastritis before any new medication is prescribed.'},
+  {icon:'🌿',bg:'rgba(212,160,74,.12)',title:'Take DGL and slippery elm BEFORE meals',body:"These two supplements coat and protect the stomach lining before food and acid arrive — taking them after meals is far less effective. Capellan's protocol: 15–20 minutes before eating, every meal. Consistency here matters far more than the exact dose."},
+  {icon:'🦠',bg:'rgba(212,160,74,.12)',title:'Start probiotics after antibiotics, not before or during',body:'Taking probiotics during antibiotic treatment significantly reduces their effectiveness. Finish the full antibiotic course first, then start a high-quality multi-strain probiotic the next day and continue for at least 3 months. This rebuilds the microbiome that was disrupted.'},
+  {icon:'🍖',bg:'rgba(122,155,118,.12)',title:'Low-fat proteins cooked gently — every time',body:'High-fat foods slow gastric emptying, extending the time your stomach lining is exposed to acid. Always choose skinless chicken or turkey, white fish, or eggs. Always grill, bake, steam, or poach — never fry. Remove all skin from poultry. Avoid red meat and fatty cuts during healing phases.'},
+  {icon:'🔄',bg:'rgba(122,155,118,.12)',title:'Track and retest — never assume you are improving',body:"Capellan's core philosophy: treat with data. After any antibiotic course, always retest to confirm the infection cleared — a negative test is not guaranteed. After 3 months of protocol, assess symptoms objectively in your journal. If not improving, investigate the next possible root cause rather than continuing the same treatment."},
+];
+
+let selectedMood='';
+const startDate=new Date('2026-03-20');
+function getMonths(){const n=new Date();return Math.max(1,(n.getFullYear()-startDate.getFullYear())*12+(n.getMonth()-startDate.getMonth())+1);}
+function getCurrentPhase(){const m=getMonths();if(m<=2)return 0;if(m<=5)return 1;if(m<=12)return 2;if(m<=18)return 3;return 4;}
+
+function renderTimeline(id){
+  const el=document.getElementById(id);if(!el)return;
+  const cur=getCurrentPhase();
+  el.innerHTML=PHASES.map((p,i)=>{
+    const cls=i<cur?'done':i===cur?'active':'locked';
+    return`<div class="phase-item ${cls}" onclick="openModal(${i})"><div class="phase-dot">${i+1}</div><div class="phase-label"><div class="phase-name">${p.name}</div><div>${p.range}</div></div></div>`;
+  }).join('');
 }
 
-function getCurrentPhase() {
-  const months = getMonthsSinceStart();
-  if (months <= 2) return 0;
-  if (months <= 5) return 1;
-  if (months <= 12) return 2;
-  if (months <= 18) return 3;
-  return 4;
-}
-
-function renderTimeline() {
-  const tl = document.getElementById('phase-timeline');
-  const current = getCurrentPhase();
-  tl.innerHTML = PHASES.map((p, i) => {
-    const cls = i < current ? 'done' : i === current ? 'active' : 'locked';
-    return `<div class="phase-item ${cls}" onclick="openPhaseModal(${i})">
-      <div class="phase-dot">${i + 1}</div>
-      <div class="phase-label">
-        <div class="phase-name">${p.name}</div>
-        <div>${p.range}</div>
+function renderPhaseCards(){
+  const el=document.getElementById('phase-cards');if(!el)return;
+  const cur=getCurrentPhase();
+  el.innerHTML=PHASES.map((p,i)=>{
+    const status=i<cur?'Completed':i===cur?'In progress':'Upcoming';
+    const bcls=i<cur?'b-green':i===cur?'b-amber':'';
+    return`<div class="card" style="margin-bottom:14px;cursor:pointer;" onclick="openModal(${i})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div style="font-family:'DM Serif Display',serif;font-size:17px;color:var(--bark);">${p.title}</div>
+        <span class="badge ${bcls}" style="flex-shrink:0;margin-left:12px;">${status}</span>
       </div>
+      <div style="font-size:11px;color:var(--sage-d);font-weight:500;margin-bottom:7px;">${p.range}</div>
+      <div style="font-size:13px;color:var(--muted);">${p.sub}</div>
     </div>`;
   }).join('');
 }
 
-function openPhaseModal(i) {
-  const p = PHASES[i];
-  const current = getCurrentPhase();
-  document.getElementById('modal-title').textContent = p.title;
-  document.getElementById('modal-subtitle').textContent = p.subtitle;
-  document.getElementById('modal-body').innerHTML = p.body;
-  const progress = i < current ? 100 : i === current ? Math.round((getMonthsSinceStart() - p.months[0] + 1) / p.months.length * 100) : 0;
-  const pct = Math.min(100, Math.max(0, progress));
-  document.getElementById('modal-progress-label').textContent = pct + '%';
-  document.getElementById('modal-progress-bar').style.width = pct + '%';
+function renderFoods(filter='all'){
+  const filtered=filter==='all'?FOODS:FOODS.filter(f=>f.cat===filter);
+  document.getElementById('food-grid').innerHTML=filtered.map(f=>{
+    const tag=f.cat==='safe'?`<span class="tag-safe">Safe</span>`:f.cat==='avoid'?`<span class="tag-avoid">Avoid</span>`:`<span class="tag-caution">Caution</span>`;
+    return`<div class="food-card ${f.cat}"><h4>${f.title}${tag}</h4><ul class="food-list">${f.items.map(i=>`<li>${i}</li>`).join('')}</ul></div>`;
+  }).join('');
+}
+
+function filterFoods(f,btn){
+  document.querySelectorAll('#food-filter .pill').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');renderFoods(f);
+}
+
+function renderSupps(){
+  document.getElementById('supp-grid').innerHTML=SUPPS.map(s=>`<div class="supp-card"><span class="supp-icon">${s.icon}</span><div class="supp-name">${s.name}</div><div class="supp-desc">${s.desc}</div><div class="supp-dose">${s.dose}</div></div>`).join('');
+}
+
+function renderMeals(){
+  document.getElementById('meal-plan-content').innerHTML=MEALS.map(d=>`<div class="meal-day"><div class="meal-day-title">${d.day}</div>${d.meals.map(m=>`<div class="meal-row"><div class="meal-time">${m.t}</div><div class="meal-desc">${m.d}</div></div>`).join('')}</div>`).join('');
+}
+
+function renderTips(){
+  document.getElementById('tips-list').innerHTML=TIPS.map(t=>`<div class="tip-card"><div class="tip-icon" style="background:${t.bg};">${t.icon}</div><div><div class="tip-title">${t.title}</div><div class="tip-body">${t.body}</div></div></div>`).join('');
+}
+
+function renderChart(){
+  const entries=getEntries().slice(0,14).reverse();
+  const el=document.getElementById('chart-bars');
+  if(!entries.length){el.innerHTML='<div class="empty" style="width:100%;font-size:12px;">Log entries to see your trend here.</div>';return;}
+  el.innerHTML=entries.map(e=>{
+    const avg=((+e.bloating+ +e.burning+ +e.nausea+ +e.pain)/4).toFixed(1);
+    const pct=(avg/10)*100;
+    const clr=avg<=3?'var(--sage)':avg<=6?'var(--amber)':'var(--red)';
+    const d=new Date(e.date);
+    return`<div class="bar-group"><div class="bar" style="height:${pct}%;background:${clr};opacity:.8;transition:height .4s ease;" data-val="Score ${avg} — ${d.getMonth()+1}/${d.getDate()}"></div><div class="bar-label">${d.getMonth()+1}/${d.getDate()}</div></div>`;
+  }).join('');
+}
+
+function renderTodaySummary(){
+  const entries=getEntries();
+  const todayKey=new Date().toDateString();
+  const entry=entries.find(e=>new Date(e.date).toDateString()===todayKey);
+  const el=document.getElementById('today-summary');
+  if(!entry){el.innerHTML='<div style="font-size:13px;color:var(--muted);">No entry yet today. <span style="color:var(--sage-d);cursor:pointer;" onclick="switchTab(\'log\')">Log your day →</span></div>';return;}
+  const avg=((+entry.bloating+ +entry.burning+ +entry.nausea+ +entry.pain)/4).toFixed(1);
+  const cls=avg<=3?'s-good':avg<=6?'s-mid':'s-bad';
+  el.innerHTML=`<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+    <div class="entry-score ${cls}" style="width:46px;height:46px;font-size:15px;">${avg}</div>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">${entry.mood||'Mood not logged'}</div>
+      <div style="font-size:12px;color:var(--muted);">${entry.food?entry.food.slice(0,90)+(entry.food.length>90?'…':''):'No food logged'}</div>
+    </div>
+    <div style="font-size:12px;color:var(--sage-d);cursor:pointer;" onclick="switchTab('log')">Update →</div>
+  </div>`;
+}
+
+function openModal(i){
+  const p=PHASES[i],cur=getCurrentPhase();
+  document.getElementById('modal-title').textContent=p.title;
+  document.getElementById('modal-sub').textContent=p.sub;
+  document.getElementById('modal-body').innerHTML=p.body;
+  const pct=i<cur?100:i===cur?Math.min(100,Math.round((getMonths()-p.months[0]+1)/p.months.length*100)):0;
+  document.getElementById('modal-pct').textContent=pct+'%';
+  document.getElementById('modal-fill').style.width=pct+'%';
   document.getElementById('modal-overlay').classList.add('open');
 }
+function closeModal(e){if(!e||e.target===document.getElementById('modal-overlay'))document.getElementById('modal-overlay').classList.remove('open');}
 
-function closeModal(e) {
-  if (!e || e.target === document.getElementById('modal-overlay')) {
-    document.getElementById('modal-overlay').classList.remove('open');
-  }
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const map={dashboard:0,log:1,plan:2,foods:3,supplements:4,meals:5,tips:6,history:7};
+  if(map[name]!==undefined)document.querySelectorAll('.nav-btn')[map[name]].classList.add('active');
+  if(name==='dashboard'){renderChart();renderTodaySummary();}
 }
 
-function updateSlider(name, val) {
-  document.getElementById('v-' + name).textContent = val;
-}
+function updateSlider(n,v){document.getElementById('v-'+n).textContent=v;}
+function selectMood(btn,mood){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selectedMood=mood;}
+function toggleCheck(item){item.classList.toggle('checked');}
+function getChecked(){return[...document.querySelectorAll('.check-item.checked')].map(el=>el.querySelector('.check-label').childNodes[0].textContent.trim());}
 
-function selectMood(btn, mood) {
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedMood = mood;
-}
-
-function toggleCheck(item) {
-  item.classList.toggle('checked');
-}
-
-function getChecked() {
-  return [...document.querySelectorAll('.check-item.checked')].map(el => el.querySelector('.check-label').textContent);
-}
-
-function saveEntry() {
-  const entry = {
-    date: new Date().toISOString(),
-    bloating: document.getElementById('sl-bloating').value,
-    burning: document.getElementById('sl-burning').value,
-    nausea: document.getElementById('sl-nausea').value,
-    pain: document.getElementById('sl-pain').value,
-    mood: selectedMood || 'Not set',
-    food: document.getElementById('food-log').value,
-    notes: document.getElementById('notes-log').value,
-    checked: getChecked()
-  };
-
-  const entries = getEntries();
-  const todayKey = new Date().toDateString();
-  const idx = entries.findIndex(e => new Date(e.date).toDateString() === todayKey);
-  if (idx >= 0) entries[idx] = entry; else entries.unshift(entry);
-  localStorage.setItem('gut_entries', JSON.stringify(entries));
-
-  renderEntries();
-  renderInsights();
+function saveEntry(){
+  const entry={date:new Date().toISOString(),bloating:document.getElementById('sl-bloating').value,burning:document.getElementById('sl-burning').value,nausea:document.getElementById('sl-nausea').value,pain:document.getElementById('sl-pain').value,stress:document.getElementById('sl-stress').value,mood:selectedMood||'Not set',food:document.getElementById('food-log').value,notes:document.getElementById('notes-log').value,checked:getChecked()};
+  const entries=getEntries();
+  const todayKey=new Date().toDateString();
+  const idx=entries.findIndex(e=>new Date(e.date).toDateString()===todayKey);
+  if(idx>=0)entries[idx]=entry;else entries.unshift(entry);
+  localStorage.setItem('gut_entries',JSON.stringify(entries));
+  renderEntries();renderInsights();renderChart();renderTodaySummary();
   showToast('Entry saved');
 }
 
-function getEntries() {
-  try { return JSON.parse(localStorage.getItem('gut_entries') || '[]'); } catch { return []; }
-}
+function getEntries(){try{return JSON.parse(localStorage.getItem('gut_entries')||'[]');}catch{return[];}}
+function clearEntries(){localStorage.removeItem('gut_entries');renderEntries();renderInsights();showToast('All entries cleared');}
 
-function renderEntries() {
-  const entries = getEntries();
-  const list = document.getElementById('entry-list');
-  if (!entries.length) {
-    list.innerHTML = '<div class="empty-state">No entries yet — save today\'s log to get started.</div>';
-    return;
-  }
-  list.innerHTML = entries.slice(0, 14).map(e => {
-    const d = new Date(e.date);
-    const avg = Math.round((+e.bloating + +e.burning + +e.nausea + +e.pain) / 4);
-    const scoreCls = avg <= 3 ? 'score-good' : avg <= 6 ? 'score-mid' : 'score-bad';
-    const summary = e.food ? e.food.slice(0, 60) + (e.food.length > 60 ? '…' : '') : 'No food logged';
-    return `<div class="entry-card">
-      <div class="entry-date-block">
-        <div class="entry-day">${d.getDate()}</div>
-        <div class="entry-month">${d.toLocaleString('default',{month:'short'})}</div>
-      </div>
-      <div class="entry-divider"></div>
-      <div class="entry-content">
-        <div class="entry-mood">${e.mood}</div>
-        <div class="entry-summary">${summary}</div>
-      </div>
-      <div class="entry-score ${scoreCls}">${avg}</div>
-    </div>`;
+function renderEntries(){
+  const entries=getEntries();
+  const list=document.getElementById('entry-list');
+  if(!entries.length){list.innerHTML='<div class="empty">No entries yet — save today\'s log to get started.</div>';return;}
+  list.innerHTML=entries.slice(0,30).map(e=>{
+    const d=new Date(e.date);
+    const avg=Math.round((+e.bloating+ +e.burning+ +e.nausea+ +e.pain)/4);
+    const cls=avg<=3?'s-good':avg<=6?'s-mid':'s-bad';
+    const summary=e.food?e.food.slice(0,65)+(e.food.length>65?'…':''):'No food logged';
+    return`<div class="entry-card"><div class="entry-date-block"><div class="entry-day">${d.getDate()}</div><div class="entry-month">${d.toLocaleString('default',{month:'short'})}</div></div><div class="entry-divider"></div><div class="entry-content"><div class="entry-mood">${e.mood}</div><div class="entry-summary">${summary}</div></div><div class="entry-score ${cls}">${avg}</div></div>`;
   }).join('');
 }
 
-function renderInsights() {
-  const entries = getEntries();
-  document.getElementById('ins-days').textContent = entries.length;
-  document.getElementById('ins-phase').textContent = getCurrentPhase() + 1;
-
-  if (entries.length) {
-    const avgs = entries.map(e => (+e.bloating + +e.burning + +e.nausea + +e.pain) / 4);
-    const avg = avgs.reduce((a,b)=>a+b,0)/avgs.length;
-    document.getElementById('ins-avg').textContent = avg.toFixed(1);
+function renderInsights(){
+  const entries=getEntries();
+  document.getElementById('ins-days').textContent=entries.length;
+  document.getElementById('ins-phase').textContent=getCurrentPhase()+1;
+  if(entries.length){
+    const avgs=entries.map(e=>(+e.bloating+ +e.burning+ +e.nausea+ +e.pain)/4);
+    document.getElementById('ins-avg').textContent=(avgs.reduce((a,b)=>a+b,0)/avgs.length).toFixed(1);
+    document.getElementById('ins-best').textContent=Math.min(...avgs).toFixed(1);
   }
-
-  // streak
-  let streak = 0;
-  const sorted = [...entries].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  let prev = new Date(); prev.setHours(0,0,0,0);
-  for (const e of sorted) {
-    const d = new Date(e.date); d.setHours(0,0,0,0);
-    const diff = (prev - d) / 86400000;
-    if (diff <= 1) { streak++; prev = d; } else break;
+  let streak=0,prev=new Date();prev.setHours(0,0,0,0);
+  for(const e of[...getEntries()].sort((a,b)=>new Date(b.date)-new Date(a.date))){
+    const d=new Date(e.date);d.setHours(0,0,0,0);
+    if((prev-d)/86400000<=1){streak++;prev=d;}else break;
   }
-  document.getElementById('ins-streak').textContent = streak;
-  document.getElementById('streak-label').textContent = streak > 0 ? `${streak}-day streak` : 'Start your streak today';
+  document.getElementById('ins-streak').textContent=streak;
+  document.getElementById('streak-label').textContent=streak>0?`${streak}-day streak`:'Start your streak today';
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-function initDate() {
-  const d = new Date();
-  document.getElementById('today-date').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-}
-
-initDate();
-renderTimeline();
+document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+renderTimeline('phase-timeline');
+renderTimeline('phase-timeline-2');
+renderPhaseCards();
+renderFoods();
+renderSupps();
+renderMeals();
+renderTips();
 renderEntries();
 renderInsights();
+renderChart();
+renderTodaySummary();
 </script>
 </body>
 </html>
