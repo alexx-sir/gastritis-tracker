@@ -143,6 +143,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
 .prog-fill{height:100%;background:var(--sage);border-radius:3px;transition:width .6s ease;}
 .toast{position:fixed;bottom:22px;right:22px;background:var(--bark);color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .3s;z-index:100;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
+.food-tag{display:inline-flex;align-items:center;gap:6px;background:var(--sage-d);color:#fff;padding:5px 11px 5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none;}
+.food-tag:hover{background:var(--bark);}
+.food-tag .tag-x{font-size:14px;opacity:.7;line-height:1;}
 </style>
 </head>
 <body>
@@ -212,7 +215,12 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
       </div>
       <div style="margin-top:18px;">
         <div class="card-title">What did you eat today?</div>
-        <textarea class="log-area" id="food-log" placeholder="e.g. oatmeal with almond milk, bone broth, steamed carrots, chamomile tea, white rice with grilled chicken..."></textarea>
+        <div id="food-tags" style="display:flex;flex-wrap:wrap;gap:7px;min-height:36px;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="food-input" class="log-area" style="min-height:unset;height:38px;flex:1;padding:8px 12px;" placeholder="e.g. oatmeal, bone broth, chamomile tea..." onkeydown="if(event.key==='Enter'){event.preventDefault();addFoodItem();}">
+          <button onclick="addFoodItem()" style="height:38px;padding:0 16px;background:var(--sage-d);color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0;">Add</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:7px;">Press Enter or tap Add after each food item. Tap a tag to remove it.</div>
       </div>
     </div>
     <div class="card">
@@ -488,13 +496,15 @@ function renderTodaySummary(){
   if(!entry){el.innerHTML='<div style="font-size:13px;color:var(--muted);">No entry yet today. <span style="color:var(--sage-d);cursor:pointer;" onclick="switchTab(\'log\')">Log your day →</span></div>';return;}
   const avg=((+entry.bloating+ +entry.burning+ +entry.nausea+ +entry.pain)/4).toFixed(1);
   const cls=avg<=3?'s-good':avg<=6?'s-mid':'s-bad';
-  el.innerHTML=`<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-    <div class="entry-score ${cls}" style="width:46px;height:46px;font-size:15px;">${avg}</div>
-    <div style="flex:1;">
-      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;">${entry.mood||'Mood not logged'}</div>
-      <div style="font-size:12px;color:var(--muted);">${entry.food?entry.food.slice(0,90)+(entry.food.length>90?'…':''):'No food logged'}</div>
+  const items=entry.foodItems||( entry.food?entry.food.split(',').map(s=>s.trim()).filter(Boolean):[]);
+  const tagsHtml=items.length?items.slice(0,6).map(f=>`<span style="background:rgba(122,155,118,.15);color:var(--sage-d);padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500;">${f}</span>`).join('')+(items.length>6?`<span style="font-size:11px;color:var(--muted);">+${items.length-6} more</span>`:''): '<span style="font-size:12px;color:var(--muted);">No food logged</span>';
+  el.innerHTML=`<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+    <div class="entry-score ${cls}" style="width:46px;height:46px;font-size:15px;flex-shrink:0;">${avg}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;">${entry.mood||'Mood not logged'}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;">${tagsHtml}</div>
     </div>
-    <div style="font-size:12px;color:var(--sage-d);cursor:pointer;" onclick="switchTab('log')">Update →</div>
+    <div style="font-size:12px;color:var(--sage-d);cursor:pointer;flex-shrink:0;" onclick="switchTab('log')">Update →</div>
   </div>`;
 }
 
@@ -519,18 +529,47 @@ function switchTab(name){
   if(name==='dashboard'){renderChart();renderTodaySummary();}
 }
 
+let foodItems=[];
+
+function addFoodItem(){
+  const input=document.getElementById('food-input');
+  const val=input.value.trim();
+  if(!val)return;
+  // split by comma to allow pasting multiple at once
+  val.split(',').map(s=>s.trim()).filter(Boolean).forEach(item=>{
+    if(!foodItems.includes(item))foodItems.push(item);
+  });
+  input.value='';
+  renderFoodTags();
+}
+
+function removeFoodItem(idx){
+  foodItems.splice(idx,1);
+  renderFoodTags();
+}
+
+function renderFoodTags(){
+  const container=document.getElementById('food-tags');
+  if(!container)return;
+  container.innerHTML=foodItems.map((item,i)=>
+    `<span class="food-tag" onclick="removeFoodItem(${i})">${item}<span class="tag-x">×</span></span>`
+  ).join('');
+}
+
 function updateSlider(n,v){document.getElementById('v-'+n).textContent=v;}
 function selectMood(btn,mood){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selectedMood=mood;}
 function toggleCheck(item){item.classList.toggle('checked');}
 function getChecked(){return[...document.querySelectorAll('.check-item.checked')].map(el=>el.querySelector('.check-label').childNodes[0].textContent.trim());}
 
 function saveEntry(){
-  const entry={date:new Date().toISOString(),bloating:document.getElementById('sl-bloating').value,burning:document.getElementById('sl-burning').value,nausea:document.getElementById('sl-nausea').value,pain:document.getElementById('sl-pain').value,stress:document.getElementById('sl-stress').value,mood:selectedMood||'Not set',food:document.getElementById('food-log').value,notes:document.getElementById('notes-log').value,checked:getChecked()};
+  const entry={date:new Date().toISOString(),bloating:document.getElementById('sl-bloating').value,burning:document.getElementById('sl-burning').value,nausea:document.getElementById('sl-nausea').value,pain:document.getElementById('sl-pain').value,stress:document.getElementById('sl-stress').value,mood:selectedMood||'Not set',food:foodItems.join(', '),foodItems:[...foodItems],notes:document.getElementById('notes-log').value,checked:getChecked()};
   const entries=getEntries();
   const todayKey=new Date().toDateString();
   const idx=entries.findIndex(e=>new Date(e.date).toDateString()===todayKey);
   if(idx>=0)entries[idx]=entry;else entries.unshift(entry);
   localStorage.setItem('gut_entries',JSON.stringify(entries));
+  foodItems=[];
+  renderFoodTags();
   renderEntries();renderInsights();renderChart();renderTodaySummary();
   showToast('Entry saved');
 }
@@ -546,8 +585,9 @@ function renderEntries(){
     const d=new Date(e.date);
     const avg=Math.round((+e.bloating+ +e.burning+ +e.nausea+ +e.pain)/4);
     const cls=avg<=3?'s-good':avg<=6?'s-mid':'s-bad';
-    const summary=e.food?e.food.slice(0,65)+(e.food.length>65?'…':''):'No food logged';
-    return`<div class="entry-card"><div class="entry-date-block"><div class="entry-day">${d.getDate()}</div><div class="entry-month">${d.toLocaleString('default',{month:'short'})}</div></div><div class="entry-divider"></div><div class="entry-content"><div class="entry-mood">${e.mood}</div><div class="entry-summary">${summary}</div></div><div class="entry-score ${cls}">${avg}</div></div>`;
+    const items=e.foodItems||(e.food?e.food.split(',').map(s=>s.trim()).filter(Boolean):[]);
+    const tagsHtml=items.length?items.slice(0,4).map(f=>`<span style="background:rgba(122,155,118,.12);color:var(--sage-d);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;">${f}</span>`).join('')+(items.length>4?`<span style="font-size:10px;color:var(--muted);">+${items.length-4}</span>`:''): `<span style="font-size:11px;color:var(--muted);">No food logged</span>`;
+    return`<div class="entry-card"><div class="entry-date-block"><div class="entry-day">${d.getDate()}</div><div class="entry-month">${d.toLocaleString('default',{month:'short'})}</div></div><div class="entry-divider"></div><div class="entry-content"><div class="entry-mood">${e.mood}</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${tagsHtml}</div></div><div class="entry-score ${cls}">${avg}</div></div>`;
   }).join('');
 }
 
